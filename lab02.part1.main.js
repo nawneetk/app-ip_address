@@ -11,14 +11,13 @@ const IPCIDR = require('ip-cidr');
  * @param {string} cidrStr - The IPv4 subnet expressed
  *                 in CIDR format.
  * @param {callback} callback - A callback function.
- * @return {string} (firstIpAddres + mappedAddress)  - An IPv4 & IPv6 address.
+ * @return {string} (firstIpAddress) - An IPv4 address.
  */
 function getFirstIpAddress(cidrStr, callback) {
 
   // Initialize return arguments for callback
   let firstIpAddress = null;
   let callbackError = null;
-  let mappedAddress = null;
 
   // Instantiate an object from the imported class and assign the instance to variable cidr.
   const cidr = new IPCIDR(cidrStr);
@@ -38,20 +37,12 @@ function getFirstIpAddress(cidrStr, callback) {
     // If the passed CIDR is valid, call the object's toArray() method.
     // Notice the destructering assignment syntax to get the value of the first array's element.
     [firstIpAddress] = cidr.toArray(options);
-    mappedAddress = firstIpAddress + getIpv4MappedIpv6Address(firstIpAddress);
-    
-    if( mappedAddress ) {
-      console.log(`  IPv4 ${firstIpAddress} mapped to IPv6 AddressXXXXXX: ${mappedAddress}`);
-    } else {
-      console.error(`  Problem converting IPv4XXXXX ${firstIpAddress} into a mapped IPv6 address.`);
-    }
-
   }
   // Call the passed callback function.
   // Node.js convention is to pass error data as the first argument to a callback.
   // The IAP convention is to pass returned data as the first argument and error
   // data as the second argument to the callback function.
-  return callback(mappedAddress, callbackError);
+  return callback(firstIpAddress, callbackError);
 }
 
 
@@ -82,7 +73,7 @@ function main() {
     });
   }
   // Iterate over sampleIpv4s and pass the element's value to getIpv4MappedIpv6Address().
-  /*for (let i = 0; i < sampleIpv4sLen; i++) {
+  for (let i = 0; i < sampleIpv4sLen; i++) {
     console.log(`\n--- Test Number ${i + 1} getIpv4MappedIpv6Address(${sampleIpv4s[i]}) ---`);
     // Assign the function results to a variable so we can check if a string or null was returned.
     let mappedAddress = getIpv4MappedIpv6Address(sampleIpv4s[i]);
@@ -91,7 +82,7 @@ function main() {
     } else {
       console.error(`  Problem converting IPv4 ${sampleIpv4s[i]} into a mapped IPv6 address.`);
     }
-  }*/
+  }
 }
 
 /**
